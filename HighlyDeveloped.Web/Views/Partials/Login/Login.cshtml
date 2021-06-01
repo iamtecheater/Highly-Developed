@@ -1,0 +1,59 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage<HighlyDeveloped.Core.ViewModel.LoginViewModel>
+@{
+    Html.EnableClientValidation();
+    Html.EnableUnobtrusiveJavaScript();
+
+    var myUser = System.Web.Security.Membership.GetUser();
+}
+<!-- Are we alraeady logged in? -->
+@if (Umbraco.MemberIsLoggedOn())
+{
+    <!-- If, yes - show logout-->
+    if (myUser != null)
+    {
+        <p><strong>Logged in as</strong> @myUser.UserName</p>
+        <a href="/logout" class="btn btn-danger">Log out</a> <i class="fa fa-arrow-right"></i>
+    }
+}
+else
+{
+    <!-- If not, show the login form -->
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                @using (Html.BeginUmbracoForm<HighlyDeveloped.Core.Controllers.LoginController>("HandleLogin"))
+                {
+                    @Html.AntiForgeryToken()
+                    @Html.ValidationSummary()
+
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.Username)
+                        @Html.TextBoxFor(m => m.Username, new
+                   {
+                       @class = "form-control",
+                            placeholder = "Username"
+                   })
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.Password)
+                        @Html.PasswordFor(m => m.Password, new
+                   {
+                            @class = "form-control",
+                            placeholder = "Password"
+                   })
+                    </div>
+                    @Html.HiddenFor(m => m.RedirectUrl)
+                    <button class="btn btn-primary" name="login" type="submit">Login</button>
+                }
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <a href="/forgotten-password/">Forgotten password?</a> |
+                <a href="/register/">Register</a>
+            </div>
+        </div>
+    </div>
+}
+

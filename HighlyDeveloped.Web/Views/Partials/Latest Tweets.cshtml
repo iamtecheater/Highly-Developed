@@ -1,0 +1,75 @@
+﻿@model HighlyDeveloped.Core.ViewModel.TwitterViewModel
+@using System.Globalization;
+@* Added check if JSON is null - for case when you haven't added twitter config*@
+@if (Model.Json != null)
+{
+ 
+    dynamic json = Newtonsoft.Json.JsonConvert.DeserializeObject(Model.Json);
+   
+    <section class="container">
+        <div class="row">
+            <div class="col">
+                <h2>Latest Tweets for @Model.TwitterHandle</h2>
+                <div class="card-deck">
+
+                    @*Get the tweets*@
+                    @*Iterate over each tweet*@
+                    @foreach (var itm in json)
+                    {
+                        DateTime createdDate = DateTime.ParseExact(itm.created_at.ToString(), "ddd MMM dd HH:mm:ss +ffff yyyy", CultureInfo.InvariantCulture);
+
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between">
+                                <div>
+                                    <!-- Twitter Handle-->
+                                    <div>
+                                        <strong>Highly Developed</strong><br />
+                                        @@@Model.TwitterHandle
+                                    </div>
+                                </div>
+                                <div>
+                                    <!-- Twitter Logo -->
+                                    <i class="fab fa-twitter fa-2x"></i>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                @itm.full_text
+                            </div>
+                            <div class="card-footer d-flex justify-content-between">
+                                <a href="https://twitter.com/@Model.TwitterHandle/status/@itm.id_str" class="stretched-link">Read More</a>
+
+                                @if (createdDate.Year == DateTime.Now.Year)
+                                {
+                                    <text>
+                                        @Html.Raw(createdDate.ToString("d MMM"))<br />
+                                    </text>
+                                }
+                                else
+                                {
+                                    <text>
+                                        @Html.Raw(createdDate.ToString("d MMM yyyy"))<br />
+                                    </text>
+                                }
+
+
+                            </div>
+                        </div>
+                    }
+
+                </div>
+
+            </div>
+        </div>
+    </section>
+}
+else
+{
+    <section class="container">
+        <div class="row">
+            <div class="col">
+                <h2>Latest Tweets for @Model.TwitterHandle</h2>
+                No tweets found.
+            </div>
+        </div>
+    </section>
+}
